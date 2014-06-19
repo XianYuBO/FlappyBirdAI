@@ -102,7 +102,7 @@ class Level(cocos.layer.Layer):
                 self.resetting = True
                 self.time_delta = 0
             elif self.game_over and self.resetting:
-                if self.time_delta > 3:
+                if self.time_delta > 1.5:
                     self.reset()
                 else:
                     self.time_delta += dt
