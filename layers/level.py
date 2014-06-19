@@ -14,10 +14,17 @@ class Level(cocos.layer.Layer):
 
     is_event_handler = True
 
-    def __init__(self):
+    def __init__(self, controller=None):
         super(Level, self).__init__()
-
+        if controller is None:
+            self.controller = None
+        else:
+            self.is_event_handler = False
+            self.controller = controller
         self.game_over = False
+        self.already_set_game_over = False
+        self.resetting = False
+        self.time_delta = 0
 
         self.score = 0
         self.score_label = cocos.text.Label('0', font_name='Times New Roman',
@@ -59,6 +66,9 @@ class Level(cocos.layer.Layer):
         self.ground.resume()
         self.ground.resume()
         self.game_over = False
+        self.resetting = False
+        self.already_set_game_over = False
+        self.time_delta = 0
 
     def on_key_press(self, symbol, modifiers):
         if not self.game_over and symbol == pyglet.window.key.SPACE:
@@ -75,13 +85,40 @@ class Level(cocos.layer.Layer):
                     tube_pair[-1] = True
                     self.score_label.element.text = str(self.score)
 
+    def get_environment(self):
+        return {
+            "game_over": self.game_over,
+            "score": self.score,
+            "tubes": map(lambda (up, down, status): (up.cshape, down.cshape, status), self.tubes.tube_lst),
+            "bird": self.bird.cshape
+        }
+
+    def ai_controller(self, dt):
+        if self.controller is not None:
+            r = self.controller(self.get_environment())
+            if not self.game_over and r == "jump":
+                self.bird.jump()
+            elif r == "reset" and self.game_over and not self.resetting:
+                self.resetting = True
+                self.time_delta = 0
+            elif self.game_over and self.resetting:
+                if self.time_delta > 3:
+                    self.reset()
+                else:
+                    self.time_delta += dt
+
     def update(self, dt):
+        self.ai_controller(dt)
+
+        if self.already_set_game_over:
+            return
         if self.game_over:
             self.score_label.element.text = "Game Over\npress R restart\ntotal score:%s" % self.score
             self.ground.pause()
             self.tubes.pause()
             self.sky.pause()
             self.bird.other_collision()
+            self.already_set_game_over = True
             return
 
         self.tubes.update(dt)
