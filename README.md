@@ -18,7 +18,7 @@ Install dependences
 How to run this project
 ============
 - `python main.py` - human can control this game, *key space* makes the bird jump, *key r* makes the game restart.
-- `python main.py controllers.xxxxx` - AI controls this game. For example: `python main.py controllers.random_controller`
+- `python main.py controllers.xxxxx` - AI controls this game. For example: `python main.py controllers.simple_controller`
 
 How to write AI
 ============
