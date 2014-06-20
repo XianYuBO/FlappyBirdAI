@@ -90,7 +90,8 @@ class Level(cocos.layer.Layer):
             "game_over": self.game_over,
             "score": self.score,
             "tubes": map(lambda (up, down, status): (up.cshape, down.cshape, status), self.tubes.tube_lst),
-            "bird": self.bird.cshape
+            "bird": self.bird.cshape,
+            "jumping": True if self.bird.jump_action is not None and not self.bird.jump_action.done() else False
         }
 
     def ai_controller(self, dt):

@@ -7,7 +7,7 @@ def controller(environment):
     if environment["game_over"]:
         return "reset"
     up_tube, down_tube = get_nearest_tube_pair(environment)
-    if environment["bird"].center.y - environment["bird"].ry < down_tube.center.y + down_tube.ry + 27 and count % 5 == 0:
+    if environment["bird"].center.y - environment["bird"].ry < down_tube.center.y + down_tube.ry + 25 and not environment["jumping"]:
         return "jump"
 
 
